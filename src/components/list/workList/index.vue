@@ -1,35 +1,58 @@
 <template>
     <div>
-        <listTitle :itemMessage="title"></listTitle>
+        <listTitle :titleList=titleList></listTitle>
         <div v-for="item in fakerList" :key="item.workId">
-            <item :itemMessage=item></item>
+            <listItem :itemMessage=item></listItem>
         </div>
     </div>
 </template>
 
 <script>
-import item from './item.vue'
-import listTitle from './title.vue'
+import listItem from './listItem.vue'
+import listTitle from './listTitle.vue'
 export default {
+    name: "workList",
     components: {
-        item,listTitle
+        listItem,
+        listTitle
     },
     data() {
         return {
-            title:{
-                workId:"任务编号",
-                workName:"任务",
-                startTime:"开始时间",
-                endTime:"结束时间",
-                statu:"状态"
-            },
+            titleList: [
+                {
+                    title: "任务",
+                    itemClass: "shortItem"
+                },
+                {
+                    title: "开始时间",
+                    itemClass: "item"
+                },
+                {
+                    title: "结束时间",
+                    itemClass: "item"
+                }
+            ],
             fakerList: [
                 {
                     workId: 0,
-                    workName: "xuexi",
-                    startTime: "2023年1月1日",
-                    endTime:"2023年1月3日",
                     statu: 0,//0 : start , 1 : stop , 2 : end
+                    list: [
+                        {
+                            title: "任务",
+                            value: "workName",
+                            itemClass: "shortItem"
+                        },
+                        {
+                            title: "开始时间",
+                            value: "2023年1月1日",
+                            itemClass: "item"
+                        },
+                        {
+                            title: "结束时间",
+                            value: "2023年1月3日",
+                            itemClass: "item"
+                        }
+                    ]
                 }
             ],
 
@@ -37,7 +60,5 @@ export default {
     }
 }
 </script>
-
 <style>
-
 </style>

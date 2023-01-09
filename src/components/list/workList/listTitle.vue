@@ -1,23 +1,29 @@
 <template>
-    <div>
-        <div class="listTitle">
-            <div class="item1">{{ itemMessage.workName }}</div>
-            <div class="item2">{{ itemMessage.startTime }}</div>
-            <div class="item3">{{ itemMessage.statu }}</div>
-            <div class="operate">
-                Operate
-            </div>
+    <div class="listTitle">
+        <div class="check" v-show="checkExisten">
+        </div>
+        <div class="itemList">
+            <div v-for="item in titleList" :key="item.title" :class="item.itemClass">{{ item.title }}</div>
+        </div>
+        <div class="operate">
+            Operate
         </div>
     </div>
 </template>
 
 <script>
 export default {
+    data(){
+        return{
+            checkExisten:true,
+            itemClass : "item"
+        }
+    },
     props: {
-        itemMessage: Object
+        titleList: Array
     },
     computed: {
-        
+
     }
 }
 </script>
@@ -31,9 +37,31 @@ export default {
         height: 40px;
         line-height: 40px;
     }
-    .item1,.item2,.item3{
-        width: 200px;
+
+    .itemList {
+        display: flex;
+        width: 1100px;
+
+        .item,
+        .shortItem,
+        .longItem {
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .item {
+            width: 200px;
+        }
+
+        .shortItem {
+            width: 100px;
+        }
+
+        .longItem {
+            width: 300px;
+        }
     }
+
     .operate {
         padding-left: 20px;
         width: 300px;
