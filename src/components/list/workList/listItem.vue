@@ -7,19 +7,20 @@
         </div>
         <div class="operate">
             <div>
-                <a-button type="primary" v-if= "itemMessage.statu == 0">finish</a-button>
+                <a-button type="primary" v-if= "itemMessage.statu == 0" @click="workFinish(itemMessage.id)">finish</a-button>
             </div>
             <div>
-                <a-button type="default">delay</a-button>
+                <a-button type="default" @click="workDelay(itemMessage.id)">delay</a-button>
             </div>
             <div>
-                <a-button type="danger">delete</a-button>
+                <a-button type="danger" @click="workDelete(itemMessage.id)">delete</a-button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+
 export default {
     name: "listItem",
     data(){
@@ -37,6 +38,18 @@ export default {
             } else {
                 return "完成"
             }
+        }
+    },
+    methods:{
+        // 按钮列表对应事件
+        workFinish(id){
+            this.$store.workModule.dispatch(id,"workFinsh");
+        },
+        workDelay(id){
+            this.$store.workModule.dispatch(id,"workDelay");
+        },
+        workDelete(id){
+            this.$store.workModule.dispatch(id,"workDelete");
         }
     }
 }
