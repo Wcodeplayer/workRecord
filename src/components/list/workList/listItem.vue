@@ -3,24 +3,24 @@
         <div class="check" v-show="checkExisten">
         </div>
         <div class="itemList">
-            <div v-for="item in itemMessage.list" :key="item.title" :class="item.itemClass">{{ item.value }}</div>
+            <div v-for="item in titleList" :key="item.title" :class="item.itemClass">{{ itemMessage.item[item.itemName].value }}</div>
         </div>
         <div class="operate">
-            <div>
-                <a-button type="primary" v-if= "itemMessage.statu == 0" @click="workFinish(itemMessage.id)">finish</a-button>
+            <div>  
+                <a-button type="primary" v-if= "itemMessage.statu != 3" @click="workFinish(itemMessage.date)">finish</a-button>
             </div>
             <div>
-                <a-button type="default" @click="workDelay(itemMessage.id)">delay</a-button>
+                <a-button type="default" @click="workDelay(itemMessage.date)">delay</a-button>
             </div>
             <div>
-                <a-button type="danger" @click="workDelete(itemMessage.id)">delete</a-button>
+                <a-button type="danger" @click="workDelete(itemMessage.date)">delete</a-button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-
+// list 下 item 的渲染 ， 渲染titleList下每一项 ， 具体数据在itemMessage
 export default {
     name: "listItem",
     data(){
@@ -29,7 +29,8 @@ export default {
         }
     },
     props: {
-        itemMessage: Object
+        itemMessage: Object,
+        titleList:Array,
     },
     computed: {
         stateMessage() {
@@ -42,14 +43,16 @@ export default {
     },
     methods:{
         // 按钮列表对应事件
-        workFinish(id){
-            this.$store.workModule.dispatch(id,"workFinsh");
+        workFinish(date){
+            let datenow = new Date();
+            let endTime = `${datenow.getFullYear()}/${datenow.getMonth()+1}/${datenow.getDate()}   ${datenow.getHours()}h`;
+            this.$store.dispatch("workModule/workFinish",{date,endTime});
         },
-        workDelay(id){
-            this.$store.workModule.dispatch(id,"workDelay");
+        workDelay(date){
+            this.$store.dispatch("workModule/workDelay",date);
         },
-        workDelete(id){
-            this.$store.workModule.dispatch(id,"workDelete");
+        workDelete(date){
+            this.$store.dispatch("workModule/workDelete",date);
         }
     }
 }
@@ -86,10 +89,8 @@ export default {
         div {
             width: 80px;
         }
-
         width: 300px;
         display: flex;
-        justify-content: space-around;
     }
 }
 </style>
