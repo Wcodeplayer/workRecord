@@ -17,7 +17,7 @@
         <a-layout>
             <a-layout-header style="background: #fff; padding: 0">
                 <!-- header -->
-                <a-form-model layout="inline" ref="ruleForm" :model="form" :rules="rules">
+                <a-form-model layout="inline" ref="ruleForm" :model="form" >
                     <a-form-model-item ref="name" prop="name">
                         <a-input v-model="form.name" placeholder="请输入任务"/>
                     </a-form-model-item>
@@ -48,8 +48,6 @@ export default {
     data() {
         return {
             titleList: this.$store.state.workModule.titleList,
-            workList: this.$store.state.workModule.workList,
-
             // header
             form: {
                 name: "",
@@ -64,12 +62,15 @@ export default {
             }else{
                 return true;
             }
-        }
+        },
+        workList(){
+            return this.$store.state.workModule.workList
+        } 
     },
     watch: {
         workList() {
             return this.$store.state.workModule.workList
-        },
+        }
     },
     methods: {
         validate(){
@@ -85,23 +86,20 @@ export default {
             let workMessage = {
                 date : dateMessage,
                 statu: 0,//0 : start , 1 : stop , 2 : delay , 3:end
-                list: [
-                    {
+                item: {
+                    Name:{
                         title: "任务",
                         value: this.form.name,
-                        itemClass: "shortItem"
                     },
-                    {
+                    startTime:{
                         title: "开始时间",
                         value: startTime,
-                        itemClass: "item"
                     },
-                    {
+                    endTime:{
                         title: "结束时间",
                         value: "",
-                        itemClass: "item"
                     }
-                ]
+                }
             }
             // 提交操作
             this.$store.dispatch('workModule/workAdd', workMessage)
