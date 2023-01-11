@@ -3,59 +3,60 @@ export default {
     state: {
         titleList: [ //workList 组件的标题栏参数
             {
+                itemName:"Name",
                 title: "任务",
                 itemClass: "shortItem"
             },
             {
+                itemName:"startTime",
                 title: "开始时间",
                 itemClass: "item"
             },
             {
+                itemName:"endTime",
                 title: "结束时间",
                 itemClass: "item"
             }
         ],
         workList: [ 
             // workList 组件的任务列表
-            //  --  each statu  --
+            //  --  item  --
             // date : dateMessage,
             // statu: 0,//0 : start , 1 : stop , 2 : delay , 3:end
-            // list: [
-            //     {
+            // item: {
+            //     Name:{
             //         title: "任务",
             //         value: this.form.name,
-            //         itemClass: "shortItem"
             //     },
-            //     {
+            //     startTime:{
             //         title: "开始时间",
             //         value: startTime,
-            //         itemClass: "item"
             //     },
-            //     {
+            //     endTime:{
             //         title: "结束时间",
             //         value: "",
-            //         itemClass: "item"
             //     }
-            // ]
+            // }
         ],
     },
     mutations: {
-        // workList_methods
-        work_finish(state, id) {
+        // workList_methods msg{date , endTime}
+        work_finish(state, msg) {
             state.workList.forEach(element => {
-                if (element.workId == id) {
-                    element.statu = 2;
+                if (element.date == msg.date) {
+                    element.statu = 3;
+                    element.item.endTime.value = msg.endTime;
                 }
             });
         },
-        work_delete(state, id) {
-            state.workList = state.workList.fillter(element => {
-                return element.workId != id
+        work_delete(state, date) {
+            state.workList = state.workList.filter(element => {
+                return element.date != date
             });
         },
-        work_delay(state, id) {
+        work_delay(state, date) {
             state.workList.forEach(element => {
-                if (element.workId == id) {
+                if (element.date == date) {
                     element.statu = 1;
                 }
             });
@@ -65,14 +66,14 @@ export default {
         }
     },
     actions: {
-        workFinish({ commit }, id) {
-            commit('work_finish', id);
+        workFinish({ commit }, msg) {
+            commit('work_finish', msg);
         },
-        workDelay({ commit }, id) {
-            commit('work_delay', id);
+        workDelay({ commit }, date) {
+            commit('work_delay', date);
         },
-        workDelete({ commit }, id) {
-            commit('work_delete', id);
+        workDelete({ commit }, date) {
+            commit('work_delete', date);
         },
         workAdd({ commit }, workMessage) {
             commit('work_add', workMessage);
