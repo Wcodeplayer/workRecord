@@ -18,11 +18,11 @@
             <a-layout-header style="background: #fff; padding: 0">
                 <!-- header -->
                 <a-form-model layout="inline" ref="ruleForm" :model="form" :rules="rules">
-                    <a-form-model-item ref="name" label="任务名 " prop="name">
-                        <a-input v-model="form.name" />
+                    <a-form-model-item ref="name" prop="name">
+                        <a-input v-model="form.name" placeholder="请输入任务"/>
                     </a-form-model-item>
                     <a-form-model-item>
-                        <a-button type="primary" @click="onSubmit">
+                        <a-button type="primary" @click="onSubmit" :disabled="!isDisabled">
                             添加任务
                         </a-button>
                     </a-form-model-item>
@@ -54,11 +54,15 @@ export default {
             form: {
                 name: "",
             },
-            rules: {
-                name: [
-                    { required: true, message: 'Please input Activity name', trigger: 'blur' },
-                    { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
-                ],
+
+        }
+    },
+    computed:{
+        isDisabled: function(){
+            if(this.form.name==""){
+                return false;
+            }else{
+                return true;
             }
         }
     },
@@ -68,10 +72,18 @@ export default {
         },
     },
     methods: {
+        validate(){
+            if(this.form.name==""){
+                return false;
+            }
+        },
         onSubmit() {
-            console.log(this.$store)
+            // get date , for workMessage
+            let date = new Date();
+            let dateMessage = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+            let startTime = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}   ${date.getHours()}h`;
             let workMessage = {
-                workId: 4,
+                date : dateMessage,
                 statu: 0,//0 : start , 1 : stop , 2 : delay , 3:end
                 list: [
                     {
@@ -81,23 +93,23 @@ export default {
                     },
                     {
                         title: "开始时间",
-                        value: "2023年1月10日",
+                        value: startTime,
                         itemClass: "item"
                     },
                     {
                         title: "结束时间",
-                        value: "2023年1月13日",
+                        value: "",
                         itemClass: "item"
                     }
                 ]
             }
+            // 提交操作
             this.$store.dispatch('workModule/workAdd', workMessage)
+
+            //提交后处理
+            this.form.name = ""
         }
     },
-    computed: {
-        // header
-
-    }
 
 };
 </script>
