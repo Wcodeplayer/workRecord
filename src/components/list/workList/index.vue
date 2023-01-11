@@ -2,7 +2,7 @@
     <div>
         <listTitle :titleList=titleList></listTitle>
         <div v-for="item in workList" :key="item.workId">
-            <listItem :itemMessage=item></listItem>
+            <listItem :itemMessage=item :titleList=titleList></listItem>
         </div>
     </div>
 </template>
