@@ -1,6 +1,6 @@
 <template>
     <a-layout id="components-layout-demo-custom-trigger">
-        <a-layout-sider :trigger="null" collapsible>
+        <a-layout-sider :trigger="null" :style="{ height: '100vh' }">
             <div class="logo"></div>
             <a-menu theme="dark" mode="inline" :default-selected-keys="['1']">
                 <a-menu-item key="1">
@@ -15,100 +15,164 @@
             </a-menu>
         </a-layout-sider>
         <a-layout>
-            <a-layout-header style="background: #fff; padding: 0">
-                <!-- header -->
-                <a-form-model layout="inline" ref="ruleForm" :model="form" >
-                    <a-form-model-item ref="name" prop="name">
-                        <a-input v-model="form.name" placeholder="请输入任务"/>
-                    </a-form-model-item>
-                    <a-form-model-item>
-                        <a-button type="primary" @click="onSubmit" :disabled="!isDisabled">
-                            添加任务
-                        </a-button>
-                    </a-form-model-item>
-
-                </a-form-model>
-            </a-layout-header>
             <!-- content -->
             <a-layout-content :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }">
-                <workList :titleList="titleList" :workList="workList"></workList>
+                <template>
+                    <a-form-model layout="inline" :model="formInline" @submit="handleSubmit" @submit.native.prevent>
+                        <a-form-model-item>
+                            <a-input v-model="formInline.workDetail" placeholder="输入任务名">
+                                <a-icon slot="prefix" type="work" style="color:rgba(0,0,0,.25)" />
+                            </a-input>
+                        </a-form-model-item>
+                        <a-form-model-item>
+                            <a-button type="primary" html-type="submit" :disabled="addValidate()">
+                                开卷
+                            </a-button>
+                        </a-form-model-item>
+                    </a-form-model>
+                </template>
+                <br>
+                <template>
+                    <a-table :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+                        :columns="columns" :data-source="data">
+                        <a slot="workDetail" slot-scope="records,col,id">
+                            <a @click="moreDetail(col)">{{ records }}</a>
+                        </a>
+                        <span slot="action" slot-scope="records, col , index">
+                            <a-button type="link" @click='workFinish(col)' :disabled="col.endTime!=''">
+                                Finish
+                            </a-button>
+                            <a-divider type="vertical" />
+                            <a-button type="link" @click='workDelete(index)'>
+                                Delete
+                            </a-button>
+                        </span>
+                    </a-table>
+                </template>
             </a-layout-content>
         </a-layout>
     </a-layout>
 </template>
 <script>
-
-import workList from '@/components/list/workList'
-// import { mapActions } from 'vuex'
 export default {
-    name: "mainPage",
-    components: {
-        workList
-    },
     data() {
         return {
-            titleList: this.$store.state.workModule.titleList,
-            // header
-            form: {
-                name: "",
-            },
-
-        }
-    },
-    computed:{
-        isDisabled: function(){
-            if(this.form.name==""){
-                return false;
-            }else{
-                return true;
+            data: [],
+            columns: [],
+            selectedRowKeys: [],
+            formInline: {
+                workDetail: ''
             }
-        },
-        workList(){
-            return this.$store.state.workModule.workList
-        } 
+        };
     },
-    watch: {
-        workList() {
-            return this.$store.state.workModule.workList
-        }
+    computed: {
+
     },
     methods: {
-        validate(){
-            if(this.form.name==""){
-                return false;
-            }
-        },
-        onSubmit() {
-            // get date , for workMessage
-            let date = new Date();
-            let dateMessage = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}-${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-            let startTime = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}   ${date.getHours()}h`;
-            let workMessage = {
-                date : dateMessage,
-                statu: 0,//0 : start , 1 : stop , 2 : delay , 3:end
-                item: {
-                    Name:{
-                        title: "任务",
-                        value: this.form.name,
-                    },
-                    startTime:{
-                        title: "开始时间",
-                        value: startTime,
-                    },
-                    endTime:{
-                        title: "结束时间",
-                        value: "",
-                    }
+        initMeth() {
+            this.data = [
+                {
+                    key: '1',
+                    workDetail: 'John Brown',
+                    startTime: '2023/1/12',
+                    endTime: '2023/1/13'
+                },
+                {
+                    key: '2',
+                    workDetail: 'Sam Smith',
+                    startTime: '2023/1/12',
+                    endTime: '2023/1/13',
+                },
+                {
+                    key: '3',
+                    workDetail: 'Flora Kitt',
+                    startTime: '2023/1/12',
+                    endTime: '2023/1/13',
                 }
-            }
-            // 提交操作
-            this.$store.dispatch('workModule/workAdd', workMessage)
+            ];
+            this.columns = [
+                {
+                    dataIndex: 'workDetail',
+                    key: 'workDetail',
+                    title: "workDetail",
+                    slots: { title: 'workDetail' },
+                    scopedSlots: { customRender: 'workDetail' },
+                    fixed: true
+                },
+                {
+                    title: 'startTime',
+                    dataIndex: 'startTime',
+                    key: 'startTime',
+                    width: 200
+                },
+                {
+                    title: 'endTime',
+                    dataIndex: 'endTime',
+                    key: 'endTime',
+                    width: 200
+                },
+                {
+                    title: 'Action',
+                    key: 'action',
+                    scopedSlots: { customRender: 'action' },
+                },
+            ];
+        },
+        // 任务添加
+        // 校验
+        addValidate() {
 
-            //提交后处理
-            this.form.name = ""
+        },
+        //提交事件
+        handleSubmit() {
+            let workDetail = this.formInline.workDetail;
+            let time = new Date();
+            let uniKey = `${time.getTime()}`
+            let startTime = `${time.getFullYear()}/${time.getMonth() + 1}/${time.getDate()}`
+            this.data.unshift({
+                workDetail,
+                key: uniKey,
+                startTime,
+                endTime: ""
+            })
+
+            //reset
+            this.formInline.workDetail = ""
+        },
+
+
+        //content 数据相关
+        onSelectChange(selectedRowKeys) {
+            console.log(selectedRowKeys);
+            this.selectedRowKeys = selectedRowKeys
+        },
+
+        //workDetail点击触发事件
+        moreDetail(col) {
+            console.log(col)
+        },
+        //Action--finish
+        workFinish(col) {
+            let time = new Date();
+            let endTime = `${time.getFullYear()}/${time.getMonth() + 1}/${time.getDate()}`
+            this.data = this.data.filter(item => {
+                return item.key != col.key
+            })
+            col.endTime = endTime
+            this.data.push(col)
+        },
+        workDelete(index) {
+            this.data = this.data.filter(
+                item => {
+                    return item.key != index
+                }
+            )
+            console.log(this.data)
         }
     },
-
+    beforeMount() {
+        this.initMeth();
+    }
 };
 </script>
 <style>
@@ -118,6 +182,7 @@ export default {
     padding: 0 24px;
     cursor: pointer;
     transition: color 0.3s;
+
 }
 
 #components-layout-demo-custom-trigger .trigger:hover {
